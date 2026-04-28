@@ -1,0 +1,46 @@
+name: AynaOTT Auto Updater
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+jobs:
+  build-and-update:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Public Repository
+        uses: actions/checkout@v4
+
+      - name: Checkout Private Script Repository
+        uses: actions/checkout@v4
+        with:
+          repository: srhady/axsportspvt
+          token: ${{ secrets.GH_PAT }}
+          path: private-script
+
+      - name: Setup Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
+        run: pip install requests
+
+      - name: Run Scraper Script
+        run: |
+          cd private-script
+          python ayna.py
+          mv aynaott.m3u ../
+          mv aynaott.json ../
+          cd ..
+        env:
+          AYNA_TOKEN: ${{ secrets.AYNA_TOKEN }}
+
+      - name: Commit and Push Changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action Bot"
+          git add aynaott.m3u aynaott.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto Update: AynaOTT Live Links" && git push)
