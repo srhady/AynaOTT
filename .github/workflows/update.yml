@@ -31,7 +31,7 @@ jobs:
       - name: Run Scraper Script
         run: |
           cd private-script
-          python Ayna_scraper.py
+          python ayna_scraper.py
           mv aynaott.m3u ../
           mv aynaott.json ../
           cd ..
