@@ -35,8 +35,6 @@ jobs:
           mv aynaott.m3u ../
           mv aynaott.json ../
           cd ..
-        env:
-          AYNA_TOKEN: ${{ secrets.AYNA_TOKEN }}
 
       - name: Commit and Push Changes
         run: |
